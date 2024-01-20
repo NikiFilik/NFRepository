@@ -1,0 +1,1 @@
+#include "lab1_functions.hpp"
