@@ -3,6 +3,9 @@
 #include <SFML/Graphics.hpp>
 
 #include "Circle.hpp"
+#include "Triangle.hpp"
+#include "Rectangle.hpp"
+#include "Line.hpp"
 
 
 namespace nf {
@@ -11,7 +14,12 @@ namespace nf {
 		int width, height;
 		std::string title;
 		sf::RenderWindow window;
+
 		nf::Circle* circleArr;
+		nf::Triangle* triangleArr;
+		nf::Rectangle* rectangleArr;
+		nf::Line* lineArr;
+
 		int cnt;
 	public:
 		Game(int width, int height, std::string title);

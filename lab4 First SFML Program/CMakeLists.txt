@@ -13,7 +13,7 @@ FetchContent_Declare(SFML
 FetchContent_MakeAvailable(SFML)
 
 include_directories("inc")
-add_executable("${PROJECT_NAME}" src/main.cpp inc/Game.hpp src/Game.cpp inc/Circle.hpp src/Circle.cpp inc/functions.hpp src/functions.cpp)
+add_executable("${PROJECT_NAME}" src/main.cpp inc/Game.hpp src/Game.cpp inc/Circle.hpp src/Circle.cpp inc/Triangle.hpp src/Triangle.cpp inc/Line.hpp src/Line.cpp inc/Rectangle.hpp src/Rectangle.cpp inc/functions.hpp src/functions.cpp)
 target_link_libraries("${PROJECT_NAME}" PRIVATE sfml-graphics)
 target_compile_features("${PROJECT_NAME}" PRIVATE cxx_std_17)
 

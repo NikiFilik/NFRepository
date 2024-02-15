@@ -1,11 +1,11 @@
-#include "Circle.hpp"
+#include "Triangle.hpp"
 
 namespace nf {
-	Circle::Circle(float x, float y, float r) {
+	Triangle::Triangle(float x, float y, float r) {
 		setup(x, y, r);
 	}
 
-	void Circle::setup(float x, float y, float r) {
+	void Triangle::setup(float x, float y, float r) {
 		this->x = x;
 		this->y = y;
 		this->r = r;
@@ -13,9 +13,11 @@ namespace nf {
 		shape.setOrigin(r, r);
 		shape.setPosition(x, y);
 		shape.setFillColor(sf::Color(rand() % 256, rand() % 256, rand() % 256, 127));
+		shape.setRotation(rand() % 120);
+		shape.setPointCount(3);
 	}
 
-	sf::CircleShape Circle::getShape() {
+	sf::CircleShape Triangle::getShape() {
 		return shape;
 	}
 }

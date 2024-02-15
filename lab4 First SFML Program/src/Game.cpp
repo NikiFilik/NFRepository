@@ -10,8 +10,15 @@ namespace nf {
 		cnt = n;
 
 		circleArr = new nf::Circle[cnt];
+		triangleArr = new nf::Triangle[cnt];
+		rectangleArr = new nf::Rectangle[cnt];
+		lineArr = new nf::Line[cnt];
+
 		for (int i = 0; i < cnt; i++) {
-			circleArr[i].setup(rand() % width, rand() % height, rand() % 100 + 25);
+			circleArr[i].setup(rand() % width, rand() % height, rand() % 90 + 10);
+			triangleArr[i].setup(rand() % width, rand() % height, rand() % 90 + 10);
+			rectangleArr[i].setup(rand() % width, rand() % height, rand() % 180 + 20, rand() % 180 + 20);
+			lineArr[i].setup(rand() % width, rand() % height, rand() % width, rand() % height);
 		}
 
 		window.create(sf::VideoMode(width, height), title);
@@ -30,6 +37,9 @@ namespace nf {
 
 			for (int i = 0; i < cnt; i++) {
 				window.draw(circleArr[i].getShape());
+				window.draw(triangleArr[i].getShape());
+				window.draw(rectangleArr[i].getShape());
+				window.draw(lineArr[i].getShape(), 2, sf::Lines);
 			}
 
 			window.display();
@@ -37,5 +47,8 @@ namespace nf {
 	}
 	void Game::end() {
 		delete[] circleArr;
+		delete[] triangleArr;
+		delete[] rectangleArr;
+		delete[] lineArr;
 	}
 }
