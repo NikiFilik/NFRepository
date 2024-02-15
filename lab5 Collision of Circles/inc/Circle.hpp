@@ -1,5 +1,6 @@
 #pragma once
 #include <SFML/Graphics.hpp>
+#include <cmath>
 
 namespace nf {
 	class Circle {
@@ -20,6 +21,10 @@ namespace nf {
 		void rightWallCollisionDetector(int width);
 		void upWallCollisionDetector();
 		void downWallCollisionDetector(int height);
+
+		bool collisionDetector(Circle& other);
+
+		void collisionProcess(Circle& other);
 
 		sf::CircleShape getShape();
 	};

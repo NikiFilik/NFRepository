@@ -12,8 +12,20 @@ namespace nf {
 		circleArr = new nf::Circle[cnt];
 
 		for (int i = 0; i < cnt; i++) {
-			int r = rand() % 90 + 10;
+			int r = rand() % 91 + 10;
 			circleArr[i].setup(rand() % ((width - 20) - 2 * r) + r + 10, rand() % ((height - 20) - 2 * r) + r + 10, r);
+
+			bool flag = false;
+			while (flag == false) {
+				flag = true;
+				circleArr[i].setup(rand() % ((width - 20) - 2 * r) + r + 10, rand() % ((height - 20) - 2 * r) + r + 10, r);
+				for (int j = 0; j < i; j++) {
+					if (circleArr[i].collisionDetector(circleArr[j])) {
+						flag = false;
+						break;
+					}
+				}
+			}
 		}
 
 		window.create(sf::VideoMode(width, height), title);
@@ -38,7 +50,14 @@ namespace nf {
 				circleArr[i].upWallCollisionDetector();
 				circleArr[i].downWallCollisionDetector(height);
 
+				for (int j = i + 1; j < cnt; j++) {
+					if (circleArr[i].collisionDetector(circleArr[j])) {
+						circleArr[i].collisionProcess(circleArr[j]);
+					}
+				}
+
 				circleArr[i].updatePosition(dt.asSeconds());
+				//circleArr[i].updatePosition(0.0005);
 				window.draw(circleArr[i].getShape());
 			}
 
