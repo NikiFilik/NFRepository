@@ -26,22 +26,30 @@ namespace nf {
 	}
 	void Circle::leftWallCollisionDetector() {
 		if (px - r <= 0) {
-			vx = -vx;
+			if (vx < 0) {
+				vx = -vx;
+			}
 		}
 	}
 	void Circle::rightWallCollisionDetector(int width) {
 		if (px + r >= width) {
-			vx = -vx;
+			if (vx > 0) {
+				vx = -vx;
+			}
 		}
 	}
 	void Circle::upWallCollisionDetector() {
 		if (py - r <= 0) {
-			vy = -vy;
+			if (vy < 0) {
+				vy = -vy;
+			}
 		}
 	}
 	void Circle::downWallCollisionDetector(int height) {
 		if (py + r >= height) {
-			vy = -vy;
+			if (vy > 0) {
+				vy = -vy;
+			}
 		}
 	}
 
@@ -49,9 +57,7 @@ namespace nf {
 		if ((px - other.px) * (px - other.px) + (py - other.py) * (py - other.py) <= (r + other.r) * (r + other.r)) {
 			return true;
 		}
-		else {
-			return false;
-		}
+		return false;
 	}
 
 	void Circle::collisionProcess(Circle& other) {

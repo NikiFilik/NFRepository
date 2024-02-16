@@ -7,12 +7,12 @@ namespace nf {
 		this->title = title;
 	}
 	void Game::setup(int n) {
+		//Создание массива кругов без пересечений с границами окна или между собой
 		cnt = n;
-
 		circleArr = new nf::Circle[cnt];
 
 		for (int i = 0; i < cnt; i++) {
-			int r = rand() % 91 + 10;
+			int r = rand() % 41 + 10;
 			circleArr[i].setup(rand() % ((width - 20) - 2 * r) + r + 10, rand() % ((height - 20) - 2 * r) + r + 10, r);
 
 			bool flag = false;
