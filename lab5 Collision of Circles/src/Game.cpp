@@ -1,13 +1,12 @@
 #include "Game.hpp"
 
 namespace nf {
-	Game::Game(int width, int height, std::string title) {
+	Game::Game(int width, int height, std::string title){
 		this->width = width;
 		this->height = height;
 		this->title = title;
 	}
 	void Game::setup(int n) {
-		//Создание массива кругов без пересечений с границами окна или между собой
 		cnt = n;
 		circleArr = new nf::Circle[cnt];
 
@@ -57,7 +56,6 @@ namespace nf {
 				}
 
 				circleArr[i].updatePosition(dt.asSeconds());
-				//circleArr[i].updatePosition(0.0005);
 				window.draw(circleArr[i].getShape());
 			}
 
