@@ -1,7 +1,7 @@
 def matrixChecker(mat):
     #Если определитель равен нулю, то у него есть столбец, который является линейной комбинацией остальных столбцов
-    determinant = mat[0][0] * mat[1][1] * mat[2][2] + mat[0][1] * mat[1][2] * mat[2][0] + mat[0][2] * mat[1][0] * mat[2][1] \
-        - mat[0][2] * mat[1][1] * mat[2][0] - mat[0][0] * mat[1][2] * mat[2][1] - mat[0][1] * mat[1][0] * mat[2][2]
+    determinant = int(mat[0][0]) * int(mat[1][1]) * int(mat[2][2]) + int(mat[0][1]) * int(mat[1][2]) * int(mat[2][0]) + int(mat[0][2]) * int(mat[1][0]) * int(mat[2][1]) \
+        - int(mat[0][2]) * int(mat[1][1]) * int(mat[2][0]) - int(mat[0][0]) * int(mat[1][2]) * int(mat[2][1]) - int(mat[0][1]) * int(mat[1][0]) * int(mat[2][2])
     
     if determinant == 0:
         print("Столбцы линейно зависимы", mat)
@@ -9,7 +9,7 @@ def matrixChecker(mat):
         print("Столбцы линейно независимы", mat)
 
 
-
-mat = [[10, 20, 30], [40, 50, 60], [70, 80, 90]]
+print("Введите матрицу 3х3:")
+mat = [input().split() for i in range(3)]
 
 matrixChecker(mat)
