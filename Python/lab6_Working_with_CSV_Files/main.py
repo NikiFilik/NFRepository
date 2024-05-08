@@ -26,10 +26,11 @@ def Show(*, type = "top", quantity = 5, separator = ','):
         indiciesOfLinesToShow = [i for i in range(len(data) - quantity, len(data))]
     elif type == "random":
         indiciesOfLinesToShow = []
+        indiciesPool = [i for i in range(len(data))]
         while(len(indiciesOfLinesToShow) < quantity):
-            index = random.randint(0, len(data) - 1)
-            if index not in indiciesOfLinesToShow:
-                indiciesOfLinesToShow.append(index)
+            index = random.randint(0, len(indiciesPool) - 1)
+            indiciesOfLinesToShow.append(indiciesPool[index])
+            indiciesPool.pop(index)
     else:
         print("Function Show(), Error: no such type")
         return
