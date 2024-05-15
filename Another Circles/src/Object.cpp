@@ -42,7 +42,7 @@ namespace nf {
 
 	void Object::update(const sf::Time& deltaTime) {
 		mSpeed += Gravity * deltaTime.asSeconds();
-		mSpeed -= mSpeed * mRadius * EnviromentDensity / mMass;
+		mSpeed -= mSpeed * mRadius * EnviromentDensity * deltaTime.asSeconds() / mMass;
 		mPosition += mSpeed * deltaTime.asSeconds();
 		mShape.setPosition(mPosition);
 	}

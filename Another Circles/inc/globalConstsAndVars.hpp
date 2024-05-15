@@ -8,5 +8,5 @@ namespace nf {
 	const sf::Time TimePerFrame = sf::seconds(1.f / 60.f);
 	
 	const sf::Vector2f Gravity(0.f, 1000.f);
-	const float EnviromentDensity = 0.00001f;
+	const float EnviromentDensity = 1.f;
 }

@@ -6,8 +6,8 @@ namespace nf {
 	Game::Game(): 
 		mWindow(sf::VideoMode(WindowWidth, WindowHeight), "RealBalls", sf::Style::Fullscreen) {
 		mWindow.setVerticalSyncEnabled(true);
-		mObjects.push_back(nf::Object(sf::Vector2f(660.f, 540.f), sf::Vector2f(0.f, 0.f), 50.f, 100.f, 0.9f, sf::Color(255, 255, 255)));
-		mObjects.push_back(nf::Object(sf::Vector2f(1260.f, 540.f), sf::Vector2f(0.f, 0.f), 50.f, 10000.f, 0.9f, sf::Color(127, 127, 127)));
+		mObjects.push_back(nf::Object(sf::Vector2f(760.f, 340.f), sf::Vector2f(0.f, 0.f), 100.f, 100.f, 0.9f, sf::Color(255, 255, 255)));
+		mObjects.push_back(nf::Object(sf::Vector2f(1160.f, 340.f), sf::Vector2f(0.f, 0.f), 100.f, 10000.f, 0.9f, sf::Color(127, 127, 127)));
 	}
 
 	void Game::run() {
