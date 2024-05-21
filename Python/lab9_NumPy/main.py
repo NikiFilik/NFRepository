@@ -1,5 +1,7 @@
 import numpy as np
 import random
+import scipy
+import time
 
 def task1():
     inputFile = open("input_task1.txt", "r")
@@ -67,7 +69,55 @@ def task4():
 
 
 def task5():
-    print()
+    N = int(input("Enter the number of data: "))
+    D = int(input("Enter the dimdension of data: "))
+
+    m = np.array([random.randint(1, 100) for i in range(D)])
+    X = np.array([np.array([random.randint(1, 100) for i in range(D)]) for j in range(N)])
+    C = np.array([np.array([0 for i in range(D)]) for j in range(D)])
+    while True:
+        for i in range(D):
+            for j in range(i + 1):
+                C[i][j] = random.randint(1, 100)
+                C[j][i] = C[i][j]
+        
+        #Checking that matrix C should be symmetric positive semidefinite
+        flag = True
+        for i in range(1, D + 1):
+            temp = np.array([np.array([0 for k in range(i)]) for j in range(i)])
+            
+            for j in range(i):
+                for k in range(i):
+                    temp[j][k] = C[j][k]
+
+            if np.linalg.det(temp) < 0:
+                flag = False
+        
+        if flag:
+            break
+
+    
+    def MyLnOfDensityMultivariateNormalDistributionFunction(D, X, m, C):
+        return -(D/2) * np.log(2 * np.pi) - 0.5 * np.log(np.linalg.det(C)) - 0.5 * np.sum((X - m) @ np.linalg.inv(C) * (X - m), axis = 1)
+    
+    print("X:", X)
+    print("m:", m)
+    print("C:", C)
+    print("My: ", MyLnOfDensityMultivariateNormalDistributionFunction(D, X, m, C))
+    print("Scipy: ", scipy.stats.multivariate_normal(m, C).logpdf(X))
+
+    #timer
+    MyStart = time.time()
+    for i in range(1000):
+        MyLnOfDensityMultivariateNormalDistributionFunction(D, X, m, C)
+    MyFinish = time.time()
+
+    ScipyStart = time.time()
+    for i in range(1000):
+        scipy.stats.multivariate_normal(m, C).logpdf(X)
+    ScipyFinish = time.time()
+
+    print("My Time:", MyFinish - MyStart, "Scipy Time:", ScipyFinish - ScipyStart)
 
 
 
