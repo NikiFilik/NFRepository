@@ -3,20 +3,24 @@
 void quickSort(int arr[], int l, int r) {
 	if (r - l >= 1) {
 		int pivot = arr[l];
-		int smallers = l;
-		int biggers = r;
-		for (int i = l; i < r; i++) {
-			if (arr[i] < pivot) {
-				std::swap(arr[i], arr[smallers]);
-				smallers++;
-			}
-			if (arr[i] > pivot) {
-				std::swap(arr[i], arr[biggers]);
-				biggers--;
+		int smallerInd = l - 1;
+		int biggerInd = r + 1;
+
+		for (int i = l; i < biggerInd; i++) {
+			while (i > smallerInd && i < biggerInd && arr[i] != pivot) {
+				if (arr[i] < pivot) {
+					smallerInd++;
+					std::swap(arr[i], arr[smallerInd]);
+				}
+				if (arr[i] > pivot) {
+					biggerInd--;
+					std::swap(arr[i], arr[biggerInd]);
+				}
 			}
 		}
-		quickSort(arr, l, smallers);
-		quickSort(arr, biggers, r);
+
+		quickSort(arr, l, smallerInd);
+		quickSort(arr, biggerInd, r);
 	}
 }
 
