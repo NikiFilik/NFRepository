@@ -2,6 +2,14 @@
 #include <vector>
 
 void radixSort(int n, int arr[]) {
+	int maxNegative = 0;
+	for (int i = 0; i < n; i++) {
+		maxNegative = std::min(maxNegative, arr[i]);
+	}
+	for (int i = 0; i < n; i++) {
+		arr[i] -= maxNegative;
+	}
+
 	int mx = -2147483647 - 1;
 	for (int i = 0; i < n; i++) {
 		mx = std::max(mx, arr[i]);
@@ -26,6 +34,10 @@ void radixSort(int n, int arr[]) {
 			}
 		}
 	}
+
+	for (int i = 0; i < n; i++) {
+		arr[i] += maxNegative;
+	}
 }
 
 int main() {
@@ -36,7 +48,7 @@ int main() {
 	std::cout << "¬ведите количество элементов массива:\n";
 	std::cin >> n;
 
-	int *arr = new int[n];
+	int* arr = new int[n];
 
 	std::cout << "¬ведите элементы массива:\n";
 	for (int i = 0; i < n; i++) {
