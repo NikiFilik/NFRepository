@@ -28,10 +28,9 @@ void quickSort(int arr[], int l, int r) {
 void generateInputData(int size, int mn, int mx) {
 	std::ofstream out("input.txt", std::ios::out);
 
-	for (int i = 0; i < size - 1; i++) {
+	for (int i = 0; i < size; i++) {
 		out << rand() % (mx - mn + 1) + mn << std::endl;
 	}
-	out << rand() % (mx - mn + 1) + mn;
 }
 
 void readInputData(int chunkLen) {
@@ -42,45 +41,58 @@ void readInputData(int chunkLen) {
 
 	char currentOut = 'A';
 	int* arr = new int[chunkLen];
-	
-	int outCntA = 0;
-	int outCntB = 0;
 
 	while (!in.eof()) {
 		int i = 0;
+
 		while (!in.eof() && i < chunkLen) {
 			in >> arr[i];
 			i++;
 		}
-		quickSort(arr, 0, i - 1);
+		
+		if (!in.eof()) {
+			quickSort(arr, 0, i - 1);
 
-		if (currentOut == 'A') {
-			int n = i;
+			if (currentOut == 'A') {
+				int n = i;
 
-			for (i = 0; i < n; i++) {
-				if (outCntA == 0) {
-					outA << arr[i];
+				for (i = 0; i < n; i++) {
+					outA << arr[i] << std::endl;
 				}
-				else {
-					outA << std::endl << arr[i];
-				}
-				outCntA++;
+
+				currentOut = 'B';
 			}
-			currentOut = 'B';
+			else if (currentOut == 'B') {
+				int n = i;
+
+				for (i = 0; i < n; i++) {
+					outB << arr[i] << std::endl;
+				}
+
+				currentOut = 'A';
+			}
 		}
-		else if (currentOut == 'B'){
-			int n = i;
+		else {
+			quickSort(arr, 0, i - 2);
 
-			for (i = 0; i < n; i++) {
-				if (outCntB == 0) {
-					outB << arr[i];
+			if (currentOut == 'A') {
+				int n = i - 1;
+
+				for (i = 0; i < n; i++) {
+					outA << arr[i] << std::endl;
 				}
-				else {
-					outB << std::endl << arr[i];
-				}
-				outCntB++;
+
+				currentOut = 'B';
 			}
-			currentOut = 'A';
+			else if (currentOut == 'B') {
+				int n = i - 1;
+
+				for (i = 0; i < n; i++) {
+					outB << arr[i] << std::endl;
+				}
+
+				currentOut = 'A';
+			}
 		}
 	}
 	delete[] arr;
@@ -123,59 +135,43 @@ void polyphaseMerge(int chunkLen) {
 			int value1, value2;
 			bool used1 = true, used2 = true;
 
-			while ((alreadyRead1 < size && !in1.eof()) || (alreadyRead2 < size && !in2.eof())) {
+			while ((alreadyRead1 < size && !in1.eof()) || !used1 || (alreadyRead2 < size && !in2.eof()) || !used2) {
 				if (alreadyRead1 < size && !in1.eof() && used1) {
 					in1 >> value1;
-					used1 = false;
-					alreadyRead1++;
+					if (!in1.eof()) {
+						used1 = false;
+						alreadyRead1++;
+					}
 				}
 				if (alreadyRead2 < size && !in2.eof() && used2) {
 					in2 >> value2;
-					used2 = false;
-					alreadyRead2++;
+					if (!in2.eof()) {
+						used2 = false;
+						alreadyRead2++;
+					}
 				}
 
 				if (used1 == false && used2 == false) {
 					if (value1 <= value2) {
 						if (currentOutput == 'A' || currentOutput == 'C') {
-							if (outCnt1 == 0) {
-								out1 << value1;
-							}
-							else {
-								out1 << std::endl << value1;
-							}
+							out1 << value1 << std::endl;
 							used1 = true;
 							outCnt1++;
 						}
 						else {
-							if (outCnt2 == 0) {
-								out2 << value1;
-							}
-							else {
-								out2 << std::endl << value1;
-							}
+							out2 << value1 << std::endl;
 							used1 = true;
 							outCnt2++;
 						}
 					}
 					else {
 						if (currentOutput == 'A' || currentOutput == 'C') {
-							if (outCnt1 == 0) {
-								out1 << value2;
-							}
-							else {
-								out1 << std::endl << value2;
-							}
+							out1 << value2 << std::endl;
 							used2 = true;
 							outCnt1++;
 						}
 						else {
-							if (outCnt2 == 0) {
-								out2 << value2;
-							}
-							else {
-								out2 << std::endl << value2;
-							}
+							out2 << value2 << std::endl;
 							used2 = true;
 							outCnt2++;
 						}
@@ -183,44 +179,24 @@ void polyphaseMerge(int chunkLen) {
 				}
 				else if(used1 == false) {
 					if (currentOutput == 'A' || currentOutput == 'C') {
-						if (outCnt1 == 0) {
-							out1 << value1;
-						}
-						else {
-							out1 << std::endl << value1;
-						}
+						out1 << value1 << std::endl;
 						used1 = true;
 						outCnt1++;
 					}
 					else {
-						if (outCnt2 == 0) {
-							out2 << value1;
-						}
-						else {
-							out2 << std::endl << value1;
-						}
+						out2 << value1 << std::endl;
 						used1 = true;
 						outCnt2++;
 					}
 				}
 				else if (used2 == false) {
 					if (currentOutput == 'A' || currentOutput == 'C') {
-						if (outCnt1 == 0) {
-							out1 << value2;
-						}
-						else {
-							out1 << std::endl << value2;
-						}
+						out1 << value2 << std::endl;
 						used2 = true;
 						outCnt1++;
 					}
 					else {
-						if (outCnt2 == 0) {
-							out2 << value2;
-						}
-						else {
-							out2 << std::endl << value2;
-						}
+						out2 << value2 << std::endl;
 						used2 = true;
 						outCnt2++;
 					}
@@ -267,7 +243,9 @@ void polyphaseMerge(int chunkLen) {
 	while (!in.eof()) {
 		int value;
 		in >> value;
-		out << value << std::endl;
+		if (!in.eof()) {
+			out << value << std::endl;
+		}
 	}
 }
 
@@ -275,13 +253,13 @@ int main() {
 	srand(time(NULL));
 	setlocale(LC_ALL, "Russian");
 
-	int memoryLimit = 5;
+	int memoryLimit = 25;
 
-	generateInputData(34, 0, 9);
+	generateInputData(1234, -1000, 1000);
 
 	readInputData(memoryLimit);
 
-	//polyphaseMerge(memoryLimit);
+	polyphaseMerge(memoryLimit);
 
 	return 0;
 }
