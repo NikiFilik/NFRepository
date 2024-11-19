@@ -1,6 +1,7 @@
 #include <iostream>
 #include <fstream>
 #include <string>
+#include <vector>
 
 int hashFunction(std::string str) {
 	int hash = 0;
@@ -10,11 +11,11 @@ int hashFunction(std::string str) {
 	return hash;
 }
 
-std::string* createHashTable(std::ifstream &in, int tableSize) {
-	std::string *hashTable = new std::string[tableSize];
+std::vector<std::string>* createHashTable(std::ifstream &in, int tableSize) {
+	std::vector<std::string> *hashTable = new std::vector<std::string>[tableSize];
 
 	for (int i = 0; i < tableSize; i++) {
-		hashTable[i] = "";
+		hashTable[i].clear();
 	}
 
 	while (!in.eof()) {
@@ -22,19 +23,7 @@ std::string* createHashTable(std::ifstream &in, int tableSize) {
 		in >> word;
 		int hash = hashFunction(word);
 		int index = hash % tableSize;
-
-		bool added = false;
-		for (int i = 0; i < tableSize; i++) {
-			if (hashTable[(index + i) % tableSize] == "") {
-				hashTable[(index + i) % tableSize] = word;
-				added = true;
-				break;
-			}
-		}
-
-		if (!added) {
-			std::cout << "Hashtable is full";
-		}
+		hashTable[index].push_back(word);
 	}
 
 	return hashTable;
@@ -45,10 +34,14 @@ int main() {
 	std::ofstream out("output.txt");
 	
 	int hashTableSize = 20;
-	std::string* hashTable = createHashTable(in, hashTableSize);
+	std::vector<std::string>* hashTable = createHashTable(in, hashTableSize);
 
 	for (int i = 0; i < hashTableSize; i++) {
-		out << i << ": " << hashTable[i] << std::endl;
+		out << i << ": ";
+		for (int j = 0; j < hashTable[i].size(); j++) {
+			out << "\"" << hashTable[i][j] << "\"" << " ";
+		}
+		out << std::endl;	
 	}
 
 	delete[] hashTable;
