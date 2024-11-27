@@ -1,5 +1,6 @@
 #include <iostream>
 #include <string>
+#include <vector>
 
 class Node {
 public:
@@ -73,40 +74,26 @@ void deleteTree(Node *root) {
     delete root;
 }
 
-void preorderTreeTraversal(Node* root) {
-    std::cout << root->value << " ";
-
-    if (root->left != NULL) {
-        preorderTreeTraversal(root->left);
+void iterativePreorderTreeTraversal(Node* root) {
+    if (root == NULL) {
+        return;
     }
 
-    if (root->right != NULL) {
-        preorderTreeTraversal(root->right);
+    std::vector<Node*> stack;
+    stack.push_back(root);
+
+    while (!stack.empty()) {
+        Node* node = stack.back();
+        stack.pop_back();
+        std::cout << node->value << " ";
+
+        if (node->right != NULL) {
+            stack.push_back(node->right);
+        }
+        if (node->left != NULL) {
+            stack.push_back(node->left);
+        }
     }
-}
-
-void inorderTreeTraversal(Node* root) {
-    if (root->left != NULL) {
-        inorderTreeTraversal(root->left);
-    }
-
-    std::cout << root->value << " ";
-
-    if (root->right != NULL) {
-        inorderTreeTraversal(root->right);
-    }
-}
-
-void postorderTreeTraversal(Node* root) {
-    if (root->left != NULL) {
-        postorderTreeTraversal(root->left);
-    }
-
-    if (root->right != NULL) {
-        postorderTreeTraversal(root->right);
-    }
-
-    std::cout << root->value << " ";
 }
 
 int main(){
@@ -116,14 +103,7 @@ int main(){
     
     Node* root = createTree(str);
 
-    preorderTreeTraversal(root);
-    std::cout << std::endl;
-
-    inorderTreeTraversal(root);
-    std::cout << std::endl;
-
-    postorderTreeTraversal(root);
-    std::cout << std::endl;
+    iterativePreorderTreeTraversal(root);
 
     deleteTree(root);
 
