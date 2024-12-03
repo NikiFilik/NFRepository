@@ -64,6 +64,9 @@ Node* createTree(std::string str) {
 }
 
 void deleteTree(Node* root) {
+    if (root == NULL) {
+        return;
+    }
     if (root->right != NULL) {
         deleteTree(root->right);
     }
@@ -74,6 +77,9 @@ void deleteTree(Node* root) {
 }
 
 Node* findElement(Node* root, int value) {
+    if (root == NULL) {
+        return root;
+    }
     if (root->value == value) {
         return root;
     }
@@ -86,26 +92,112 @@ Node* findElement(Node* root, int value) {
     return NULL;
 }
 
-void printTree(Node* root) {
-    std::cout << root->value;
+Node* findPlaceInTree(Node* root, int value) {
+    if (root == NULL) {
+        return NULL;
+    }
+    if (value == root->value) {
+        return NULL;
+    }
+    if (value < root->value) {
+        if(root->left == NULL){
+            return root;
+        }
+        else {
+            return findPlaceInTree(root->left, value);
+        }
+    }
+    if (value > root->value) {
+        if (root->right == NULL) {
+            return root;
+        }
+        else {
+            return findPlaceInTree(root->right, value);
+        }
+    }
+}
 
-    if (root->left != NULL || root->right != NULL) {
-        std::cout << '(';
-        if (root->left != NULL) {
-            printTree(root->left);
+void putElementIntoTree(Node* root, int element) {
+    if (findElement(root, element) != NULL) {
+        std::cout << "This element already in tree\n";
+        return;
+    }
+
+    Node* parent = findPlaceInTree(root, element);
+    if (parent != NULL) {
+        if (element < parent->value) {
+            parent->left = new Node;
+            parent->left->value = element;
         }
-        std::cout << ',';
-        if (root->right != NULL) {
-            printTree(root->right);
+        else {
+            parent->right = new Node;
+            parent->right->value = element;
         }
-        std::cout << ')';
+    }
+}
+
+Node* findMinInTree(Node* root) {
+    if (root->left == NULL) {
+        return root;
+    }
+    else return findMinInTree(root->left);
+}
+
+Node* deleteElementFromTree(Node* root, int element) {
+    if (root == NULL) {
+        return root;
+    }
+    if (element < root->value) {
+        root->left = deleteElementFromTree(root->left, element);
+    }
+    else if (element > root->value) {
+        root->right = deleteElementFromTree(root->right, element);
+    }
+    else {
+        if (root->left == NULL) {
+            Node* ptr = root->right;
+            delete root;
+            return ptr;
+        }
+        else if (root->right == NULL) {
+            Node* ptr = root->left;
+            delete root;
+            return ptr;
+        }
+        
+        Node* minNode = findMinInTree(root->right);
+        root->value = minNode->value;
+        root->right = deleteElementFromTree(root->right, minNode->value);
+        
+    }
+    return root;
+}
+
+void printTree(Node* root) {
+    if (root != NULL) {
+        std::cout << root->value;
+
+        if (root->left != NULL || root->right != NULL) {
+            std::cout << '(';
+            if (root->left != NULL) {
+                printTree(root->left);
+            }
+            std::cout << ',';
+            if (root->right != NULL) {
+                printTree(root->right);
+            }
+            std::cout << ')';
+        }
+    }
+    else {
+        std::cout << "Tree is empty";
     }
 }
 
 int main(){
     //TREE EXAMPLE: 8(3(1,6(4,7)),10(,14(13,)))
     std::string str;
-    std::getline(std::cin, str);
+    std::cin >> str;
     
     Node* root = createTree(str);
 
@@ -115,24 +207,31 @@ int main(){
         std::cin >> chosenOperation;
 
         if (chosenOperation == 1) {
+            std::cout << "Enter the element you want to add: ";
+            int element;
+            std::cin >> element;
 
+            putElementIntoTree(root, element);
         }
 
         else if (chosenOperation == 2) {
+            std::cout << "Enter the element you want to delete: ";
+            int element;
+            std::cin >> element;
 
+            root = deleteElementFromTree(root, element);
         }
 
         else if (chosenOperation == 3) {
             std::cout << "Enter the element you want to find: ";
-
             int element;
             std::cin >> element;
 
             if (findElement(root, element) != NULL) {
-                std::cout << "Element found!\n";
+                std::cout << "Element found\n";
             }
             else {
-                std::cout << "There is no such element in the tree!\n";
+                std::cout << "There is no such element in the tree\n";
             }
         }
 
@@ -147,8 +246,6 @@ int main(){
 
     std::cout << "\nFinal tree:\n";
     printTree(root);
-
     deleteTree(root);
-
     return 0;
 }
