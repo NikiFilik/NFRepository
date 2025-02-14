@@ -7,7 +7,7 @@ class Point2d {
 private:
 	int x, y;
 public:
-	Point2d(int x, int y){
+	Point2d(int x, int y) {
 		setX(x);
 		setY(y);
 	}
@@ -27,14 +27,14 @@ public:
 		this->y = y;
 	}
 
-	int getX() {
+	int getX() const {
 		return x;
 	}
-	int getY() {
+	int getY() const {
 		return y;
 	}
 
-	std::string asString() {
+	std::string toString() const {
 		return "(" + std::to_string(this->x) + ", " + std::to_string(this->y) + ")";
 	}
 };
@@ -51,6 +51,10 @@ public:
 
 	}
 
+	Vector2d(Point2d p1, Point2d p2) : x(p2.getX() - p1.getX()), y(p2.getY() - p1.getY()) {
+
+	}
+
 	void setX(int x) {
 		this->x = x;
 	}
@@ -58,13 +62,63 @@ public:
 		this->y = y;
 	}
 
-	int getX() {
+	int getX() const {
 		return x;
 	}
-	int getY() {
+	int getY() const {
 		return y;
 	}
+
+	std::string toString() const {
+		return "(" + std::to_string(this->x) + ", " + std::to_string(this->y) + ")";
+	}
+
+	float abs() const {
+		return std::sqrt(x * x + y * y);
+	}
+
+	float dotProduct(Vector2d other) const {
+		return x * other.getX() + y * other.getY();
+	}
+
+	int crossProduct(Vector2d other) const {
+		return x * other.getY() - y * other.getX();
+	}
+
+	Vector2d operator + (Vector2d other) const {
+		return Vector2d(x + other.getX(), y + other.getY());
+	}
+	Vector2d& operator += (Vector2d other) {
+		x += other.getX();
+		y += other.getY();
+		return *this;
+	}
+
+	Vector2d operator - (Vector2d other) const {
+		return Vector2d(x - other.getX(), y - other.getY());
+	}
+	Vector2d& operator -= (Vector2d other) {
+		x -= other.getX();
+		y -= other.getY();
+		return *this;
+	}
+	Vector2d operator - () const {
+		return Vector2d(-x, -y);
+	}
+
+	Vector2d& operator *= (int n) {
+		x *= n;
+		y *= n;
+		return *this;
+	}
 };
+
+Vector2d operator * (int n, Vector2d v) {
+	return Vector2d(v.getX() * n, v.getY() * n);
+}
+Vector2d operator * (Vector2d v, int n) {
+	return Vector2d(v.getX() * n, v.getY() * n);
+}
 
 int main() {
 
