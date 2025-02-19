@@ -1,17 +1,18 @@
 #include <iostream>
+#include <ctime>
 
 int* dataCreation(int &arrSize) {
-    std::cout << "Input size of array\n>";
+    std::cout << "Input size of array\n> ";
     std::cin >> arrSize;
 
     int* arr = new int[arrSize];
 
     int option;
-    std::cout << "Select option: 0 - Enter array by yourself, 1 - Random array\n>";
+    std::cout << "Select option: 0 - Enter array by yourself, 1 - Random array\n> ";
     std::cin >> option;
 
     if (option == 0) {
-        std::cout << "Input array\n>";
+        std::cout << "Input array\n> ";
         for (int i = 0; i < arrSize; i++) {
             std::cin >> arr[i];
         }
@@ -22,7 +23,7 @@ int* dataCreation(int &arrSize) {
             arr[i] = rand() % (mx - mn + 1) + mn;
         }
 
-        std::cout << "Generated array\n>";
+        std::cout << "Generated array\n> ";
         for (int i = 0; i < arrSize; i++) {
             std::cout << arr[i] << " ";
         }
@@ -42,37 +43,51 @@ int main(){
     partialSum[0] = 0;
     int* minPartialSum = new int[arrSize + 1];
     minPartialSum[0] = 0;
+    int* minPartialSumIndex = new int[arrSize + 1];
+    minPartialSumIndex[0] = -1;
 
     for (int i = 0; i < arrSize; i++) {
         partialSum[i + 1] = partialSum[i] + arr[i];
-        minPartialSum[i + 1] = std::min(minPartialSum[i], partialSum[i + 1]);
+        if (minPartialSum[i] > partialSum[i + 1]) {
+        	minPartialSum[i + 1] = partialSum[i + 1];
+        	minPartialSumIndex[i + 1] = i;
+		}
+		else {
+			minPartialSum[i + 1] = minPartialSum[i];
+        	minPartialSumIndex[i + 1] = minPartialSumIndex[i];
+		}
     }
-
-
-
-    int* maxSum = new int[arrSize + 1];
-    maxSum[0] = 0;
-
-    int* startIndex = new int[arrSize + 1];
-    int* finishIndex = new int[arrSize + 1];
-    startIndex[0] = -1; finishIndex[0] = -1;
-
-    for (int i = 0; i < arrSize; i++) {
-        maxSum[i + 1] = std::max(maxSum[i], partialSum[i + 1] - minPartialSum[i + 1]);
-        if (maxSum[i] > partialSum[i + 1] - minPartialSum[i + 1]) {
-            maxSum[i + 1] = maxSum[i];
-            startIndex[i + 1] = startIndex[i];
-            finishIndex[i + 1] = finishIndex[i];
-        }
-        else {
-            maxSum[i + 1] = partialSum[i + 1] - minPartialSum[i + 1];
-        }
-    }
-
-    std::cout << maxSum[arrSize];
-
-    delete[] arr, partialSum, minPartialSum;
-    delete[] maxSum, startIndex, finishIndex;
+    std::cout << "\nPartialSumArray\n> ";
+    for(int i = 0; i <= arrSize; i++){
+    	std::cout << partialSum[i] << " ";
+	}
+	std::cout << "\n";
+    std::cout << "minPartialSumArray\n> ";
+    for(int i = 0; i <= arrSize; i++){
+    	std::cout << minPartialSum[i] << " ";
+	}
+	std::cout << "\n";
+	std::cout << "minPartialSumIndexArray\n> ";
+	for(int i = 0; i <= arrSize; i++){
+    	std::cout << minPartialSumIndex[i] << " ";
+	}
+	std::cout << "\n\n";
+	
+    int maxSum = 0, firstIndex = -1, lastIndex = -1;
+    
+    for (int i = 1; i <= arrSize; i++) {
+    	if (partialSum[i] - minPartialSum[i - 1] >= maxSum) {
+    		maxSum = partialSum[i] - minPartialSum[i - 1];
+    		firstIndex = minPartialSumIndex[i - 1] + 1;
+    		lastIndex = i - 1;
+		}
+	}
+	
+	std::cout << "Max sum in array: " << maxSum << "\n";
+	std::cout << "Index of the first number in subarray: " << firstIndex << "\n";
+	std::cout << "Index of the last number in subarray: " << lastIndex << "\n";
+	
+    delete[] arr, partialSum, minPartialSum, minPartialSumIndex;
 
     return 0;
 }
