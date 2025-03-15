@@ -87,6 +87,9 @@ int main() {
 				iter++;
 			}
 		}
+		if (crossProduct(*(convexHull.end() - 2), *(convexHull.end() - 1), *(convexHull.begin())) == 0) {
+			convexHull.erase(convexHull.end() - 1);
+		}
 
 		std::cout << "Coordinates of points in convex hull:\n";
 		for (Point2d i : convexHull) {
