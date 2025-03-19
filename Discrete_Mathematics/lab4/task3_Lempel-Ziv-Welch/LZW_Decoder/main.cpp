@@ -30,6 +30,14 @@ int binaryStringToInt(std::string str){
     return n;
 }
 
+int intPower(int base, int exp) {
+    int p = 1;
+    for (int i = 1; i <= exp; i++) {
+        p *= base;
+    }
+    return p;
+}
+
 int main() {
     //READING CODE TABLE FILE
     std::ifstream in("codeTable.txt");
@@ -53,16 +61,12 @@ int main() {
 
     in.close();
 
-    int binaryCodeLength = 1;
-    for (int numOfCodes = 2; numOfCodes < codeTable.size(); numOfCodes *= 2) {
-        binaryCodeLength++;
-    }
+    int binaryCodeLength = codeTable[0].binaryCode.size();
+    int codeTableMaxSize = intPower(2, binaryCodeLength);
 
-    /*for (LZWCode i : codeTable) {
-        std::cout << "\"" << i.str << "\"" << " " << i.code << " " << i.binaryCode << std::endl;
-    }*/
 
-    //DECODING
+
+    //READING CODE
     in.open("LZWCode.txt");
 
     std::string LZWCodeStr;
@@ -70,17 +74,18 @@ int main() {
 
     in.close();
 
+
+
+    //DECODING
     std::ofstream out("LZWDecoded.txt");
 
     std::string currentBinary, currentStr, lastStr;
     bool previousIsPresent = false;
-    for (int i = 0; i < LZWCodeStr.size(); i++) {
-        std::cout << "---START---" << std::endl;
+    for (int i = 0; i < LZWCodeStr.size(); i += binaryCodeLength) {
+        currentBinary = std::string(LZWCodeStr, i, binaryCodeLength);
+        /*std::string trash;
+        std::getline(std::cin, trash);*/
 
-        currentBinary += LZWCodeStr[i];
-
-        std::cout << "CURRENT BINARY: " << currentBinary << std::endl;
-        
         bool isPresent = false;
         for (int j = 0; j < codeTable.size(); j++) {
             if (codeTable[j].binaryCode == currentBinary) {
@@ -90,40 +95,12 @@ int main() {
             }
         }
 
-        std::cout << "IS PRESENT: " << isPresent << std::endl;
-        std::cout << "IS PREVIOUS PRESENT: " << previousIsPresent << std::endl;
+        if (codeTable.size() < codeTableMaxSize) {
 
-        std::cout << "CURRENT STR: " << "\"" << currentStr << "\"" << std::endl;
-        std::cout << "LAST STR: " << "\"" << lastStr << "\"" << std::endl;
-
-        if (!isPresent && previousIsPresent) {
-            if (lastStr.size() != 0) {
-                LZWCode newCode;
-
-                newCode.str = lastStr + currentStr[0];
-                newCode.code = codeTable.size();
-                newCode.binaryCode = std::string(std::max(int(binaryCodeLength - intToBinaryString(newCode.code).size()), 0), '0') + intToBinaryString(newCode.code);
-
-                codeTable.push_back(newCode);
-
-                std::cout << "WAS ADDED TO TABLE: " << "\"" << newCode.str << "\"" << " " << newCode.code << " " << newCode.binaryCode << std::endl;
-            }
-            
-            out << currentStr;
-            lastStr = currentStr;
-            currentBinary = currentBinary[currentBinary.size() - 1];
-
-            std::cout << "WAS PRINTED: " << "\"" << currentStr << "\"" << std::endl;
         }
-
-        previousIsPresent = isPresent;
-
-        std::cout << "---FINISH---" << std::endl;
-        std::string trash;
-        std::getline(std::cin, trash);
     }
 
     out.close();
-
+    
     return 0;
 }
