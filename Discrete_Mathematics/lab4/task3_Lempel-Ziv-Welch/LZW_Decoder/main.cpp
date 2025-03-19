@@ -80,24 +80,31 @@ int main() {
     std::ofstream out("LZWDecoded.txt");
 
     std::string currentBinary, currentStr, lastStr;
-    bool previousIsPresent = false;
     for (int i = 0; i < LZWCodeStr.size(); i += binaryCodeLength) {
         currentBinary = std::string(LZWCodeStr, i, binaryCodeLength);
-        /*std::string trash;
-        std::getline(std::cin, trash);*/
 
-        bool isPresent = false;
         for (int j = 0; j < codeTable.size(); j++) {
             if (codeTable[j].binaryCode == currentBinary) {
                 currentStr = codeTable[j].str;
-                isPresent = true;
+                out << currentStr;
+                
                 break;
             }
         }
 
-        if (codeTable.size() < codeTableMaxSize) {
+        if (codeTable.size() < codeTableMaxSize && lastStr.size() != 0) {
+            LZWCode newCode;
 
+            newCode.str = lastStr + currentStr[0];
+            newCode.code = codeTable.size();
+            newCode.binaryCode = std::string(binaryCodeLength - intToBinaryString(newCode.code).size(), '0') + intToBinaryString(newCode.code);
+
+            if (codeTable.size() < codeTableMaxSize) {
+                codeTable.push_back(newCode);
+            }
         }
+
+        lastStr = currentStr;
     }
 
     out.close();
