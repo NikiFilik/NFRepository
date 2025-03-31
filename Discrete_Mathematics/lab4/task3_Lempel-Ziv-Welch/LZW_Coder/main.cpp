@@ -29,7 +29,7 @@ struct LZWCode {
 
 int main() {
     const std::string TEXT_FILENAME = "text.txt";
-    const int binaryCodeLength = 12;
+    const int maxBinaryCodeLength = 13;
 
     std::string text;
 
@@ -48,6 +48,8 @@ int main() {
 
     in.close();
 
+    std::cout << text.size();
+
 
 
     //CREATING SET OF USED CHARACTERS
@@ -60,7 +62,15 @@ int main() {
 
 
     //START OF CREATING CODE TABLE
-    int codeTableMaxSize = intPower(2, binaryCodeLength);
+    int maxCodeTableMaxSize = intPower(2, maxBinaryCodeLength);
+
+    int currentBinaryCodeLength = 1;
+    int currentCodeTableMaxSize = 2;
+    while (currentCodeTableMaxSize < charSet.size()) {
+        currentBinaryCodeLength++;
+        currentCodeTableMaxSize *= 2;
+    }
+
     std::vector<LZWCode> codeTable;
     
     for (char i : charSet) {
@@ -68,9 +78,9 @@ int main() {
 
         newCode.str = i;
         newCode.code = codeTable.size();
-        newCode.binaryCode = std::string(binaryCodeLength - intToBinaryString(newCode.code).size(), '0') + intToBinaryString(newCode.code);
+        newCode.binaryCode = std::string(currentBinaryCodeLength - intToBinaryString(newCode.code).size(), '0') + intToBinaryString(newCode.code);
 
-        if (codeTable.size() < codeTableMaxSize) {
+        if (codeTable.size() < maxCodeTableMaxSize) {
             codeTable.push_back(newCode);
         }
     }
@@ -104,25 +114,30 @@ int main() {
             }
         }
 
-        if (codeTable.size() < codeTableMaxSize) {
+        if (codeTable.size() < maxCodeTableMaxSize) {
             if (!isPresent) {
-                //ADDING NEW CODE
-                LZWCode newCode;
-
-                newCode.str = currentStr;
-                newCode.code = codeTable.size();
-                newCode.binaryCode = std::string(int(binaryCodeLength - intToBinaryString(newCode.code).size()), '0') + intToBinaryString(newCode.code);
-
-                if (codeTable.size() < codeTableMaxSize) {
-                    codeTable.push_back(newCode);
-                }
-
                 //OUTPUT TO FILE
                 for (int j = 0; j < codeTable.size(); j++) {
                     if (codeTable[j].str == std::string(currentStr, 0, currentStr.size() - 1)) {
                         out << codeTable[j].binaryCode;
                     }
                 }
+                
+                //UPDATING CODE TABLE
+                if (codeTable.size() == currentCodeTableMaxSize && currentCodeTableMaxSize < maxCodeTableMaxSize) {
+                    currentBinaryCodeLength++;
+                    currentCodeTableMaxSize *= 2;
+                    for (int j = 0; j < codeTable.size(); j++) {
+                        codeTable[j].binaryCode = "0" + codeTable[j].binaryCode;
+                    }
+                }
+
+                //ADDING NEW CODE
+                LZWCode newCode;
+                newCode.str = currentStr;
+                newCode.code = codeTable.size();
+                newCode.binaryCode = std::string(int(currentBinaryCodeLength - intToBinaryString(newCode.code).size()), '0') + intToBinaryString(newCode.code);
+                codeTable.push_back(newCode);
 
                 currentStr = currentStr[currentStr.size() - 1];
             }
@@ -140,49 +155,10 @@ int main() {
         }
     }
 
-
-
     //LAST CODE
-    bool isPresent = false;
-    for (int i = 0; i < codeTable.size(); i++) {
-        if (codeTable[i].str == currentStr) {
-            isPresent = true;
-            break;
-        }
-    }
-
-    if (codeTable.size() < codeTableMaxSize) {
-        if (!isPresent) {
-            //ADDING NEW CODE
-            LZWCode newCode;
-
-            newCode.str = currentStr;
-            newCode.code = codeTable.size();
-            newCode.binaryCode = std::string(int(binaryCodeLength - intToBinaryString(newCode.code).size()), '0') + intToBinaryString(newCode.code);
-
-            if (codeTable.size() < codeTableMaxSize) {
-                codeTable.push_back(newCode);
-            }
-
-            //OUTPUT TO FILE
-            for (int j = 0; j < codeTable.size(); j++) {
-                if (codeTable[j].str == std::string(currentStr, 0, currentStr.size() - 1)) {
-                    out << codeTable[j].binaryCode;
-                }
-            }
-
-            currentStr = currentStr[currentStr.size() - 1];
-        }
-    }
-    else {
-        if (isPresent) {
-            for (int j = 0; j < codeTable.size(); j++) {
-                if (codeTable[j].str == currentStr) {
-                    out << codeTable[j].binaryCode;
-                }
-            }
-
-            currentStr.clear();
+    for (int j = 0; j < codeTable.size(); j++) {
+        if (codeTable[j].str == currentStr) {
+            out << codeTable[j].binaryCode;
         }
     }
 

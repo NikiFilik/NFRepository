@@ -2,7 +2,6 @@
 #include <fstream>
 #include <string>
 #include <vector>
-#include <set>
 
 struct LZWCode {
     std::string str;
@@ -61,8 +60,10 @@ int main() {
 
     in.close();
 
-    int binaryCodeLength = codeTable[0].binaryCode.size();
-    int codeTableMaxSize = intPower(2, binaryCodeLength);
+    const int maxBinaryCodeLength = 13;
+    int maxCodeTableMaxSize = intPower(2, maxBinaryCodeLength);
+    int currentBinaryCodeLength = codeTable[0].binaryCode.size();
+    int currentCodeTableMaxSize = intPower(2, currentBinaryCodeLength);
 
 
 
@@ -80,8 +81,8 @@ int main() {
     std::ofstream out("LZWDecoded.txt");
 
     std::string currentBinary, currentStr, lastStr;
-    for (int i = 0; i < LZWCodeStr.size(); i += binaryCodeLength) {
-        currentBinary = std::string(LZWCodeStr, i, binaryCodeLength);
+    for (int i = 0; i < LZWCodeStr.size(); i += currentBinaryCodeLength) {
+        currentBinary = std::string(LZWCodeStr, i, currentBinaryCodeLength);
 
         for (int j = 0; j < codeTable.size(); j++) {
             if (codeTable[j].binaryCode == currentBinary) {
@@ -92,16 +93,23 @@ int main() {
             }
         }
 
-        if (codeTable.size() < codeTableMaxSize && lastStr.size() != 0) {
+        if (codeTable.size() < maxCodeTableMaxSize && lastStr.size() != 0) {
             LZWCode newCode;
 
             newCode.str = lastStr + currentStr[0];
             newCode.code = codeTable.size();
-            newCode.binaryCode = std::string(binaryCodeLength - intToBinaryString(newCode.code).size(), '0') + intToBinaryString(newCode.code);
+            newCode.binaryCode = std::string(currentBinaryCodeLength - intToBinaryString(newCode.code).size(), '0') + intToBinaryString(newCode.code);
 
-            if (codeTable.size() < codeTableMaxSize) {
-                codeTable.push_back(newCode);
+            codeTable.push_back(newCode);
+        }
+
+        if (codeTable.size() == currentCodeTableMaxSize && codeTable.size() < maxCodeTableMaxSize) {
+            currentBinaryCodeLength++;
+            currentCodeTableMaxSize *= 2;
+            for (int j = 0; j < codeTable.size(); j++) {
+                codeTable[j].binaryCode = "0" + codeTable[j].binaryCode;
             }
+            i--;
         }
 
         lastStr = currentStr;
