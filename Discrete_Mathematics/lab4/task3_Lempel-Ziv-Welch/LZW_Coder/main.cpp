@@ -48,8 +48,6 @@ int main() {
 
     in.close();
 
-    std::cout << text.size();
-
 
 
     //CREATING SET OF USED CHARACTERS
