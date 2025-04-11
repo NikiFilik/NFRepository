@@ -3,11 +3,16 @@
 #include <cmath>
 #include <random>
 
-const int numOfVertices = 37000;
+
+
+const int numOfVertices = 20, maxDistance = 1000;
 
 std::random_device rd;   // non-deterministic generator
 std::mt19937 gen(rd());  // to seed mersenne twister.
-std::uniform_int_distribution<> dist(0, numOfVertices - 1); // distribute results between 1 and 6 inclusive.
+std::uniform_int_distribution<> randomVertex(0, numOfVertices - 1); // distribute results between 0 and numOfVertices - 1 inclusive.
+std::uniform_int_distribution<> randomDistance(0, maxDistance - 1);
+
+
 
 int** createGraph(int numOfVertices) {
 	int** graph = new int* [numOfVertices];
@@ -17,6 +22,7 @@ int** createGraph(int numOfVertices) {
 			graph[i][j] = -1;
 		}
 	}
+	//std::cout << "Graph created!\n";
 	return graph;
 }
 
@@ -28,6 +34,7 @@ void clearGraph(int** graph, int numOfVertices) {
 			graph[i][j] = -1;
 		}
 	}
+	//std::cout << "Graph cleared!\n";
 }
 
 
@@ -39,8 +46,8 @@ void fillGraph(int** graph, int numOfVertices) {
 		bool added = false;
 
 		while (!added) {
-			int u = dist(gen), v = dist(gen);
-			int distance = dist(gen);
+			int u = randomVertex(gen), v = randomVertex(gen);
+			int distance = randomDistance(gen);
 
 			if (u != v && graph[u][v] == -1) {
 				graph[u][v] = distance;
@@ -50,6 +57,7 @@ void fillGraph(int** graph, int numOfVertices) {
 			}
 		}
 	}
+	//std::cout << "Graph filled!\n";
 }
 
 
@@ -59,6 +67,7 @@ void deleteGraph(int** graph, int numOfVertices) {
 		delete[] graph[i];
 	}
 	delete graph;
+	//std::cout << "Graph deleted!\n";
 }
 
 
@@ -92,8 +101,57 @@ int** createGoodGraph(int numOfVertices) {
 		if (checked.size() == numOfVertices) {
 			isConnected = true;
 		}
+		//std::cout << "Graph was checked!\n";
+
+		//ADDING K6
+		for (int i = 0; i < 6; i++) {
+			for (int j = i + 1; j < 6; j++) {
+				int distance = randomDistance(gen);
+				graph[i][j] = distance;
+				graph[j][i] = distance;
+			}
+		}
+		
+		//ADDING K5,5
+		for (int i = numOfVertices - 10; i < numOfVertices; i++) {
+			for (int j = numOfVertices - 10; j < numOfVertices; j++) {
+				graph[i][j] = -1;
+			}
+		}
+
+		for (int i = numOfVertices - 10; i < numOfVertices - 5; i++) {
+			for (int j = numOfVertices - 5; j < numOfVertices; j++) {
+				int distance = randomDistance(gen);
+				graph[i][j] = distance;
+				graph[j][i] = distance;
+			}
+		}
 	}
+	//std::cout << "Good graph created!\n";
 	return graph;
+}
+
+
+
+int** FloydAlgorithm(int** graph, int numOfVertices) {
+	int** shortestPath = createGraph(numOfVertices);
+	for (int i = 0; i < numOfVertices; i++) {
+		for (int j = 0; j < numOfVertices; j++) {
+			shortestPath[i][j] = graph[i][j];
+		}
+	}
+	
+	for (int k = 0; k < numOfVertices; k++) {
+		for (int i = 0; i < numOfVertices; i++) {
+			for (int j = 0; j < numOfVertices; j++) {
+				if (shortestPath[i][j] > shortestPath[i][k] + shortestPath[k][j]) {
+					shortestPath[i][j] = shortestPath[i][k] + shortestPath[k][j];
+				}
+			}
+		}
+	}
+
+	return shortestPath;
 }
 
 int main() {
@@ -106,6 +164,16 @@ int main() {
 		std::cout << "\n";
 	}*/
 
+	int** shortestPath = FloydAlgorithm(graph, numOfVertices);
+
+	/*for (int i = 0; i < numOfVertices; i++) {
+		for (int j = 0; j < numOfVertices; j++) {
+			std::cout << graph[i][j] << "\t";
+		}
+		std::cout << "\n";
+	}*/
+
+	deleteGraph(shortestPath, numOfVertices);
 	deleteGraph(graph, numOfVertices);
 	return 0;
 }
