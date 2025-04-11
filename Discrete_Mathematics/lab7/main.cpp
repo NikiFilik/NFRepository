@@ -2,15 +2,16 @@
 #include <set>
 #include <cmath>
 #include <random>
+#include <fstream>
 
 
 
-const int numOfVertices = 20, maxDistance = 1000;
+const int numOfVertices = 1000, maxDistance = 100;
 
 std::random_device rd;   // non-deterministic generator
 std::mt19937 gen(rd());  // to seed mersenne twister.
 std::uniform_int_distribution<> randomVertex(0, numOfVertices - 1); // distribute results between 0 and numOfVertices - 1 inclusive.
-std::uniform_int_distribution<> randomDistance(0, maxDistance - 1);
+std::uniform_int_distribution<> randomDistance(1, maxDistance);
 
 
 
@@ -102,7 +103,7 @@ int** createGoodGraph(int numOfVertices) {
 			isConnected = true;
 		}
 		//std::cout << "Graph was checked!\n";
-
+		
 		//ADDING K6
 		for (int i = 0; i < 6; i++) {
 			for (int j = i + 1; j < 6; j++) {
@@ -126,6 +127,7 @@ int** createGoodGraph(int numOfVertices) {
 				graph[j][i] = distance;
 			}
 		}
+		
 	}
 	//std::cout << "Good graph created!\n";
 	return graph;
@@ -138,13 +140,16 @@ int** FloydAlgorithm(int** graph, int numOfVertices) {
 	for (int i = 0; i < numOfVertices; i++) {
 		for (int j = 0; j < numOfVertices; j++) {
 			shortestPath[i][j] = graph[i][j];
+			if (i == j) {
+				shortestPath[i][j] = 0;
+			}
 		}
 	}
 	
 	for (int k = 0; k < numOfVertices; k++) {
 		for (int i = 0; i < numOfVertices; i++) {
 			for (int j = 0; j < numOfVertices; j++) {
-				if (shortestPath[i][j] > shortestPath[i][k] + shortestPath[k][j]) {
+				if ((shortestPath[i][j] > shortestPath[i][k] + shortestPath[k][j] || shortestPath[i][j] == -1) && shortestPath[i][k] != -1 && shortestPath[k][j] != -1) {
 					shortestPath[i][j] = shortestPath[i][k] + shortestPath[k][j];
 				}
 			}
@@ -154,26 +159,101 @@ int** FloydAlgorithm(int** graph, int numOfVertices) {
 	return shortestPath;
 }
 
+
+
+int* BellmanFordAlgorithm(int** graph, int numOfVertices) {
+	int* shortestPath = new int [numOfVertices];
+
+	for (int i = 0; i < numOfVertices; i++) {
+		shortestPath[i] = INT_MAX;
+	}
+
+	shortestPath[0] = 0;
+
+	for (int i = 0; i < numOfVertices; i++) {
+		for (int j = 0; j < numOfVertices; j++) {
+			if (graph[i][j] != -1 && shortestPath[j] > shortestPath[i] + graph[i][j]) {
+				shortestPath[j] = shortestPath[i] + graph[i][j];
+			}
+		}
+	}
+
+	return shortestPath;
+}
+
+
+
+void printInConsole(int** graph, int numOfVertices) {
+	for (int i = 0; i < numOfVertices; i++) {
+		for (int j = 0; j < numOfVertices; j++) {
+			std::cout << graph[i][j] << "\t";
+		}
+		std::cout << "\n";
+	}
+
+	std::cout << "\n\n\n";
+}
+
+
+
+void printInConsole(int* distances, int numOfVertices) {
+	for (int i = 0; i < numOfVertices; i++) {
+		std::cout << distances[i] << "\t";
+	}
+	std::cout << "\n";
+
+	std::cout << "\n\n\n";
+}
+
+
+
+void printInFile(int** graph, int numOfVertices) {
+	std::ofstream out("output.txt", std::ios::app);
+
+	for (int i = 0; i < numOfVertices; i++) {
+		for (int j = 0; j < numOfVertices; j++) {
+			out << graph[i][j] << "\t";
+		}
+		out << "\n";
+	}
+
+	out << "\n\n\n";
+}
+
+
+
+void printInFile(int* distances, int numOfVertices) {
+	std::ofstream out("output.txt", std::ios::app);
+
+	for (int i = 0; i < numOfVertices; i++) {
+		out << distances[i] << "\t";
+	}
+	out << "\n";
+
+	out << "\n\n\n";
+}
+
+
+
 int main() {
 	int** graph = createGoodGraph(numOfVertices);
 	
-	/*for (int i = 0; i < numOfVertices; i++) {
-		for (int j = 0; j < numOfVertices; j++) {
-			std::cout << graph[i][j] << "\t";
-		}
-		std::cout << "\n";
-	}*/
+	//printInConsole(graph, numOfVertices);
+	//printInFile(graph, numOfVertices);
 
-	int** shortestPath = FloydAlgorithm(graph, numOfVertices);
+	int** FloydGraph = FloydAlgorithm(graph, numOfVertices);
 
-	/*for (int i = 0; i < numOfVertices; i++) {
-		for (int j = 0; j < numOfVertices; j++) {
-			std::cout << graph[i][j] << "\t";
-		}
-		std::cout << "\n";
-	}*/
+	//printInConsole(FloydGraph, numOfVertices);
+	//printInFile(FloydGraph, numOfVertices);
 
-	deleteGraph(shortestPath, numOfVertices);
+	int* BellmanFordDistances = BellmanFordAlgorithm(graph, numOfVertices);
+
+	//printInConsole(BellmanFordDistances, numOfVertices);
+	//printInFile(BellmanFordDistances, numOfVertices);
+
 	deleteGraph(graph, numOfVertices);
+	deleteGraph(FloydGraph, numOfVertices);
+	delete[] BellmanFordDistances;
+
 	return 0;
 }
