@@ -6,7 +6,7 @@
 
 
 
-const int numOfVertices = 1000, maxDistance = 100;
+const int numOfVertices = 6500, maxDistance = 100;
 
 std::random_device rd;   // non-deterministic generator
 std::mt19937 gen(rd());  // to seed mersenne twister.
@@ -83,26 +83,6 @@ int** createGoodGraph(int numOfVertices) {
 		isConnected = false;
 
 		fillGraph(graph, numOfVertices);
-
-		//CHECKING GRAPH CONNECTIVITY
-		std::set<int> needToCheck{0}, checked{};
-
-		while (needToCheck.size() > 0) {
-			int current = *(needToCheck.begin());
-			needToCheck.erase(current);
-			checked.insert(current);
-
-			for (int i = 0; i < numOfVertices; i++) {
-				if (graph[current][i] != -1 && needToCheck.count(i) == 0 && checked.count(i) == 0) {
-					needToCheck.insert(i);
-				}
-			}
-		}
-
-		if (checked.size() == numOfVertices) {
-			isConnected = true;
-		}
-		//std::cout << "Graph was checked!\n";
 		
 		//ADDING K6
 		for (int i = 0; i < 6; i++) {
@@ -127,6 +107,26 @@ int** createGoodGraph(int numOfVertices) {
 				graph[j][i] = distance;
 			}
 		}
+		
+		//CHECKING GRAPH CONNECTIVITY
+		std::set<int> needToCheck{0}, checked{};
+
+		while (needToCheck.size() > 0) {
+			int current = *(needToCheck.begin());
+			needToCheck.erase(current);
+			checked.insert(current);
+
+			for (int i = 0; i < numOfVertices; i++) {
+				if (graph[current][i] != -1 && needToCheck.count(i) == 0 && checked.count(i) == 0) {
+					needToCheck.insert(i);
+				}
+			}
+		}
+
+		if (checked.size() == numOfVertices) {
+			isConnected = true;
+		}
+		//std::cout << "Graph was checked!\n";
 		
 	}
 	//std::cout << "Good graph created!\n";
@@ -246,14 +246,14 @@ int main() {
 	//printInConsole(FloydGraph, numOfVertices);
 	//printInFile(FloydGraph, numOfVertices);
 
-	int* BellmanFordDistances = BellmanFordAlgorithm(graph, numOfVertices);
+	//int* BellmanFordDistances = BellmanFordAlgorithm(graph, numOfVertices);
 
 	//printInConsole(BellmanFordDistances, numOfVertices);
 	//printInFile(BellmanFordDistances, numOfVertices);
 
 	deleteGraph(graph, numOfVertices);
 	deleteGraph(FloydGraph, numOfVertices);
-	delete[] BellmanFordDistances;
+	//delete[] BellmanFordDistances;
 
 	return 0;
 }
