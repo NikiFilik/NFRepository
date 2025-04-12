@@ -6,7 +6,7 @@
 
 
 
-const int numOfVertices = 6500, maxDistance = 100;
+const int numOfVertices = 1000, maxDistance = 100;
 
 std::random_device rd;   // non-deterministic generator
 std::mt19937 gen(rd());  // to seed mersenne twister.
@@ -165,15 +165,16 @@ int* BellmanFordAlgorithm(int** graph, int numOfVertices) {
 	int* shortestPath = new int [numOfVertices];
 
 	for (int i = 0; i < numOfVertices; i++) {
-		shortestPath[i] = INT_MAX;
+		shortestPath[i] = 10000000;
 	}
 
 	shortestPath[0] = 0;
-
-	for (int i = 0; i < numOfVertices; i++) {
-		for (int j = 0; j < numOfVertices; j++) {
-			if (graph[i][j] != -1 && shortestPath[j] > shortestPath[i] + graph[i][j]) {
-				shortestPath[j] = shortestPath[i] + graph[i][j];
+	for (int k = 0; k < numOfVertices; k++) {
+		for (int i = 0; i < numOfVertices; i++) {
+			for (int j = 0; j < numOfVertices; j++) {
+				if (graph[i][j] != -1 && shortestPath[j] > shortestPath[i] + graph[i][j]) {
+					shortestPath[j] = shortestPath[i] + graph[i][j];
+				}
 			}
 		}
 	}
@@ -239,17 +240,17 @@ int main() {
 	int** graph = createGoodGraph(numOfVertices);
 	
 	//printInConsole(graph, numOfVertices);
-	//printInFile(graph, numOfVertices);
+	printInFile(graph, numOfVertices);
 
 	int** FloydGraph = FloydAlgorithm(graph, numOfVertices);
 
 	//printInConsole(FloydGraph, numOfVertices);
-	//printInFile(FloydGraph, numOfVertices);
+	printInFile(FloydGraph, numOfVertices);
 
 	int* BellmanFordDistances = BellmanFordAlgorithm(graph, numOfVertices);
 
 	//printInConsole(BellmanFordDistances, numOfVertices);
-	//printInFile(BellmanFordDistances, numOfVertices);
+	printInFile(BellmanFordDistances, numOfVertices);
 
 	deleteGraph(graph, numOfVertices);
 	deleteGraph(FloydGraph, numOfVertices);
