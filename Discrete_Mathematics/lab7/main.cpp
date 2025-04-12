@@ -246,14 +246,14 @@ int main() {
 	//printInConsole(FloydGraph, numOfVertices);
 	//printInFile(FloydGraph, numOfVertices);
 
-	//int* BellmanFordDistances = BellmanFordAlgorithm(graph, numOfVertices);
+	int* BellmanFordDistances = BellmanFordAlgorithm(graph, numOfVertices);
 
 	//printInConsole(BellmanFordDistances, numOfVertices);
 	//printInFile(BellmanFordDistances, numOfVertices);
 
 	deleteGraph(graph, numOfVertices);
 	deleteGraph(FloydGraph, numOfVertices);
-	//delete[] BellmanFordDistances;
+	delete[] BellmanFordDistances;
 
 	return 0;
 }
