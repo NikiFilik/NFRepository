@@ -64,7 +64,7 @@ int main() {
 		}
 	}
 
-	std::cout << "Graph:\n";
+	std::cout << "\n\n\nGraph:\n";
 	for (int i = 0; i < numOfVertices; i++) {
 		for (int j = 0; j < numOfVertices; j++) {
 			std::cout << graph[i][j] << "\t";
@@ -84,13 +84,70 @@ int main() {
 	std::vector<std::vector<int>> permutations;
 	generatePermutations(nums, 0, permutations);
 
-	std::cout << "Permutations:\n";
+	/*std::cout << "Permutations:\n";
 	for (int i = 0; i < permutations.size(); i++) {
 		for (int j = 0; j < numOfVertices; j++) {
 			std::cout << permutations[i][j] << "\t";
 		}
 		std::cout << "\n";
 	}
-	std::cout << "\n\n\n";
+	std::cout << "\n\n\n";*/
+
+
+
+	//FINDING BEST COLORING
+	std::vector<int> bestColoring(numOfVertices);
+	int minNumColors = numOfVertices;
+
+	for (int loop = 0; loop < permutations.size(); loop++) {
+		std::vector<std::vector<int>> newGraph(numOfVertices, std::vector<int>(numOfVertices));
+
+		for (int i = 0; i < numOfVertices; i++) {
+			for (int j = 0; j < numOfVertices; j++) {
+				newGraph[permutations[loop][i]][permutations[loop][j]] = graph[i][j];
+			}
+		}
+		
+		/*std::cout << "New graph:\n";
+		for (int i = 0; i < numOfVertices; i++) {
+			for (int j = 0; j < numOfVertices; j++) {
+				std::cout << newGraph[i][j] << "\t";
+			}
+			std::cout << "\n";
+		}
+		std::cout << "\n\n\n";*/
+
+		//GREEDY ALGORITHM
+		std::vector<int> coloring(numOfVertices);
+		for (int i = 0; i < numOfVertices; i++) {
+			std::set<int> alreadyUsedColors;
+			for (int j = 0; j < i; j++) {
+				if (newGraph[i][j] == 1) {
+					alreadyUsedColors.insert(coloring[j]);
+				}
+			}
+			for (int j = 0; j < numOfVertices; j++) {
+				if (std::find(alreadyUsedColors.begin(), alreadyUsedColors.end(), j) == alreadyUsedColors.end()) {
+					coloring[i] = j;
+					break;
+				}
+			}
+		}
+		std::set<int> usedColors;
+		for (int i = 0; i < numOfVertices; i++) {
+			usedColors.insert(coloring[i]);
+		}
+		if (usedColors.size() < minNumColors) {
+			minNumColors = usedColors.size();
+			for (int i = 0; i < numOfVertices; i++) {
+				bestColoring[i] = coloring[permutations[loop][i]]; //POSSIBLE PIPA
+			}
+		}
+	}
+
+	std::cout << "Minimum number of colors: " << minNumColors << "\n";
+	for (int i = 0; i < numOfVertices; i++) {
+		std::cout << bestColoring[i] << "\t";
+	}
 	return 0;
 }
