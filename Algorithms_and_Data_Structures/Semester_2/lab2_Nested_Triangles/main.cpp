@@ -1,6 +1,9 @@
 #include <iostream>
+#include <algorithm>
 #include <string>
 #include <vector>
+
+const float ACCURACY = 0.0001f;
 
 
 
@@ -20,6 +23,11 @@ public:
 		return (this->x == other.x && this->y == other.y);
 	}
 };
+
+std::ostream& operator<<(std::ostream& out, const Point p) {
+	out << "(" << p.x << ", " << p.y << ")";
+	return out;
+}
 
 
 
@@ -65,20 +73,22 @@ public:
 			throw std::string("ERROR: The values a and b must be different.");
 		}
 
-		if (b.x - a.x == 0.f) {
-			this->a = b.y - a.y;
+		if (std::abs(b.x - a.x) < ACCURACY) {
+			this->a = 1.f;
 			this->b = 0.f;
-			this->c = a.x * (a.y - b.y);
+			this->c = -a.x;
+			return;
 		}
 
-		if (b.y - a.y == 0.f) {
+		if (std::abs(b.y - a.y) < ACCURACY) {
 			this->a = 0.f;
-			this->b = b.x - a.x;
-			this->c = a.y * (a.x - b.x);
+			this->b = 1.f;
+			this->c = -a.y;
+			return;
 		}
 
 		this->a = b.y - a.y;
-		this->b = a.x - b.y;
+		this->b = a.x - b.x;
 		this->c = a.y * (b.x - a.x) - a.x * (b.y - a.y);
 	}
 
@@ -120,24 +130,27 @@ public:
 
 
 bool areIntersect(Line l1, Line l2) {
-	if ((l1.a / l2.a == l1.b / l2.b) || (l1.a == 0 && l2.a == 0) || (l1.b == 0 && l2.b == 0)) {
+	if ((std::abs(l1.a / l2.a - l1.b / l2.b) < ACCURACY) || (std::abs(l1.a) < ACCURACY && std::abs(l2.a) < ACCURACY) || (std::abs(l1.b) < ACCURACY && std::abs(l2.b) < ACCURACY)) {
 		return false;
 	}
 	return true;
 }
 
 Point intersectionPoint(Line l1, Line l2) {
+	//std::cout << "LINE1 " << l1.a << " " << l1.b << " " << l1.c << "\n";
+	//std::cout << "LINE2 " << l2.a << " " << l2.b << " " << l2.c << "\n";
 	if (!areIntersect(l1, l2)) {
 		throw std::string("ERROR: Objects have 0 intersection points or they are identical.");
 	}
 	float x, y;
-	if (l1.b == 0) {
-		x = -l1.c - l1.a;
+	if (std::abs(l1.b) < ACCURACY) {
+		x = -l1.c / l1.a;
 		y = (-l2.a * x - l2.c) / l2.b;
+		
 		return Point(x, y);
 	}
-	if (l2.b == 0) {
-		x = -l2.c - l2.a;
+	if (std::abs(l2.b) < ACCURACY) {
+		x = -l2.c / l2.a;
 		y = (-l1.a * x - l1.c) / l1.b;
 		return Point(x, y);
 	}
@@ -153,7 +166,8 @@ bool areIntersect(Line l, Segment s) {
 		return false;
 	}
 	Point p = intersectionPoint(l, Line(s));
-	if (p.x < std::min(s.p1.x, s.p2.x) || p.x > std::max(s.p1.x, s.p2.x) || p.y < std::min(s.p1.y, s.p2.y) || p.y > std::max(s.p1.y, s.p2.y)) {
+	if (std::abs(p.x - std::min(s.p1.x, s.p2.x)) < ACCURACY || std::abs(p.x - std::max(s.p1.x, s.p2.x)) > ACCURACY || 
+		std::abs(p.y - std::min(s.p1.y, s.p2.y)) < ACCURACY || std::abs(p.y - std::max(s.p1.y, s.p2.y)) > ACCURACY) {
 		return false;
 	}
 	return true;
@@ -177,14 +191,22 @@ Point intersectionPoint(Segment s, Line l) {
 
 
 bool areIntersect(Segment s1, Segment s2) {
+	//std::cout << "SEGMENTS" << s1.p1 << " " << s1.p2 << " " << s2.p1 << " " << s2.p2 << "\n";
 	if (!areIntersect(Line(s1), Line(s2))) {
 		return false;
 	}
+
 	Point p = intersectionPoint(Line(s1), Line(s2));
-	if (p.x < std::max(std::min(s1.p1.x, s1.p2.x), std::min(s2.p1.x, s2.p2.x)) || p.x > std::min(std::max(s1.p1.x, s1.p2.x), std::max(s2.p1.x, s2.p2.x)) || 
-		p.y < std::max(std::min(s1.p1.y, s1.p2.y), std::min(s2.p1.y, s2.p2.y)) || p.y > std::min(std::max(s1.p1.y, s1.p2.y), std::max(s2.p1.y, s2.p2.y))) {
+	
+	//std::cout << "INTERSECTION POINT OF LINES" << p << "\n";
+	if ((p.x - std::min(s1.p1.x, s1.p2.x)) < -ACCURACY || (p.x - std::max(s1.p1.x, s1.p2.x)) > ACCURACY ||
+		(p.y - std::min(s1.p1.y, s1.p2.y)) < -ACCURACY || (p.y - std::max(s1.p1.y, s1.p2.y)) > ACCURACY || 
+		(p.x - std::min(s2.p1.x, s2.p2.x)) < -ACCURACY || (p.x - std::max(s2.p1.x, s2.p2.x)) > ACCURACY ||
+		(p.y - std::min(s2.p1.y, s2.p2.y)) < -ACCURACY || (p.y - std::max(s2.p1.y, s2.p2.y)) > ACCURACY) {
+		//std::cout << "NOT ON SEGMENTS" << "\n\n";
 		return false;
 	}
+	//std::cout << "ON SEGMENTS" << "\n\n";
 	return true;
 }
 
@@ -315,7 +337,83 @@ std::vector<Point> intersectionPoints(Circle c1, Circle c2) {
 	}
 }
 
-int main() {
 
+
+
+
+bool pointComparator(Point p1, Point p2) {
+	if (p1.x > p2.x) {
+		return false;
+	}
+	if (p1.x == p2.x && p1.y >= p2.y) {
+		return false;
+	}
+	return true;
+}
+
+bool isTriangle(Point p1, Point p2, Point p3) {
+	if (!areIntersect(Line(p1, p2), Line(p1, p3))) {
+		return false;
+	}
+	return true;
+}
+
+bool isInTriangle(Point a, Point b, Point c, Point p) {
+	if (p == a || p == b || p == c) {
+		return false;
+	}
+	Point m((a.x + b.x + c.x) / 3.f, (a.y + b.y + c.y) / 3.f);
+	//std::cout << "TRIANGLE AND MEDIAN AND POINT: " << a << " " << b << " " << c << " " << m << " " << p << "\n\n";
+	if (areIntersect(Segment(p, m), Segment(a, b)) || areIntersect(Segment(p, m), Segment(a, c)) || areIntersect(Segment(p, m), Segment(b, c))) {
+		//std::cout << p << " IS NOT NESTED IN " << a << " " << b << " " << c << "\n\n\n\n\n\n\n";
+		return false;
+		
+	}
+	//std::cout << p << " IS NESTED IN " << a << " " << b << " " << c << "\n\n\n\n\n\n\n";
+	return true;
+}
+
+
+int main() {
+	std::vector<Point> points{ Point(0.f, 0.f), Point(10.f, 0.f), Point(0.f, 10.f), Point(10.f, 10.f),
+		Point(1.f, 1.f), Point(5.f, 9.f), Point(9.f, 5.f),
+		Point(2.f, 2.f), Point(5.f, 8.f), Point(8.f, 5.f), };
+
+	std::sort(points.begin(), points.end(), pointComparator);
+
+	/*for (int i = 0; i < points.size(); i++) {
+		std::cout << points[i].x << " " << points[i].y << "\n";
+	}*/
+
+	for (int A = 0; A < points.size(); A++) {
+		for (int B = A + 1; B < points.size(); B++) {
+			for (int C = B + 1; C < points.size(); C++) {
+				if (!isTriangle(points[A], points[B], points[C])) {
+					continue;
+				}
+				std::vector<Point> nestedPoints;
+				for (int i = A; i <= C; i++) {
+					if (i == A || i == B || i == C) {
+						continue;
+					}
+					if (isInTriangle(points[A], points[B], points[C], points[i])) {
+						nestedPoints.push_back(points[i]);
+					}
+				}
+
+				for (int a = 0; a < nestedPoints.size(); a++) {
+					for (int b = a + 1; b < nestedPoints.size(); b++) {
+						for (int c = b + 1; c < nestedPoints.size(); c++) {
+							if (isTriangle(nestedPoints[a], nestedPoints[b], nestedPoints[c])) {
+								std::cout << "EXTERNAL TRIANGLE: " << points[A] << " " << points[B] << " " << points[C] << "\n";
+								std::cout << "NESTED TRIANGLE: " << nestedPoints[a] << " " << nestedPoints[b] << " " << nestedPoints[c] << "\n\n\n";
+								return 0;
+							}
+						}
+					}
+				}
+			}
+		}
+	}
 	return 0;
 }
