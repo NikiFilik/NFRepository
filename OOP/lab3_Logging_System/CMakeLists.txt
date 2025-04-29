@@ -13,12 +13,15 @@ include_directories(
 
 add_executable("${PROJECT_NAME}" 
 	src/main.cpp
+
 	inc/ILogFilter.hpp
 	inc/SimpleLogFilter.hpp src/SimpleLogFilter.cpp
 	inc/RegExpLogFilter.hpp src/RegExpLogFilter.cpp
+
 	inc/ILogHandler.hpp
 	inc/FileLogHandler.hpp src/FileLogHandler.cpp
 	inc/SocketLogHandler.hpp src/SocketLogHandler.cpp
 	inc/ConsoleLogHandler.hpp src/ConsoleLogHandler.cpp
-	inc/SyslogLogHandler.hpp src/SyslogLogHandler.cpp
+
+	inc/Logger.hpp src/Logger.cpp
 )

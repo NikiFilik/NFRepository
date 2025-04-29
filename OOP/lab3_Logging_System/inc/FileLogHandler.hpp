@@ -6,11 +6,14 @@
 #include <fstream>
 
 namespace nf {
-	class FileLogHandler : ILogHandler {
+	class FileLogHandler : public ILogHandler {
 	private:
 		std::ofstream out;
 	public:
-		FileLogHandler(const std::string filename);
+		FileLogHandler(const std::string& filename);
+
 		void handle(const std::string& text) override;
+
+		~FileLogHandler();
 	};
 }

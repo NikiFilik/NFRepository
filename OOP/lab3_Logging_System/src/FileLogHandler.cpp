@@ -1,7 +1,7 @@
 #include "FileLogHandler.hpp"
 
 namespace nf {
-	FileLogHandler::FileLogHandler(const std::string filename) {
+	FileLogHandler::FileLogHandler(const std::string& filename) {
 		out.open(filename, std::ios::app);
 	}
 
@@ -9,5 +9,9 @@ namespace nf {
 		if (out.is_open()) {
 			out << text << std::endl;
 		}
+	}
+
+	FileLogHandler::~FileLogHandler() {
+		out.close();
 	}
 }

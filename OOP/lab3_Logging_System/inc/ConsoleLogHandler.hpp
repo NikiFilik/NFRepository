@@ -5,7 +5,7 @@
 #include <string>
 
 namespace nf {
-	class ConsoleLogHandler : ILogHandler {
+	class ConsoleLogHandler : public ILogHandler {
 	public:
 		void handle(const std::string& text) override;
 	};
