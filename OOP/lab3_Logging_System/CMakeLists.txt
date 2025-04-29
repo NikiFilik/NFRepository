@@ -20,7 +20,6 @@ add_executable("${PROJECT_NAME}"
 
 	inc/ILogHandler.hpp
 	inc/FileLogHandler.hpp src/FileLogHandler.cpp
-	inc/SocketLogHandler.hpp src/SocketLogHandler.cpp
 	inc/ConsoleLogHandler.hpp src/ConsoleLogHandler.cpp
 
 	inc/Logger.hpp src/Logger.cpp
