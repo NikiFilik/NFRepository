@@ -39,6 +39,14 @@ public:
 	}
 };
 
+std::ostream& operator<<(std::ostream& out, const Point2d& p) {
+	return out << p.toString();
+}
+
+
+
+
+
 class Vector2d {
 private:
 	int x, y;
@@ -113,6 +121,10 @@ public:
 	}
 };
 
+std::ostream& operator<<(std::ostream& out, const Vector2d& v) {
+	return out << v.toString();
+}
+
 Vector2d operator * (int n, Vector2d v) {
 	return Vector2d(v.getX() * n, v.getY() * n);
 }
@@ -121,6 +133,10 @@ Vector2d operator * (Vector2d v, int n) {
 }
 
 int main() {
+	Point2d A(3, 4);
+	std::cout << A;
 
+	Vector2d V(7, 5);
+	std::cout << V;
 	return 0;
 }
