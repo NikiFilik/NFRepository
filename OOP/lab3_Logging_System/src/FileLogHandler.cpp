@@ -7,7 +7,7 @@ namespace nf {
 
 	void FileLogHandler::handle(const std::string& text) {
 		if (out.is_open()) {
-			out << text << std::endl;
+			out << "FILE LOG: " << text << std::endl;
 		}
 	}
 

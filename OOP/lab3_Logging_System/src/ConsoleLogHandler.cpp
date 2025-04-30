@@ -4,6 +4,6 @@
 
 namespace nf {
 	void ConsoleLogHandler::handle(const std::string& text) {
-		std::cout << text << std::endl;
+		std::cout << "CONSOLE LOG: " << text << std::endl;
 	}
 }

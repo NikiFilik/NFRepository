@@ -19,8 +19,10 @@ add_executable("${PROJECT_NAME}"
 	inc/RegExpLogFilter.hpp src/RegExpLogFilter.cpp
 
 	inc/ILogHandler.hpp
-	inc/FileLogHandler.hpp src/FileLogHandler.cpp
 	inc/ConsoleLogHandler.hpp src/ConsoleLogHandler.cpp
+	inc/FileLogHandler.hpp src/FileLogHandler.cpp
+	inc/SocketLogHandler.hpp src/SocketLogHandler.cpp
+	inc/SyslogLogHandler.hpp src/SyslogLogHandler.cpp
 
 	inc/Logger.hpp src/Logger.cpp
 )
