@@ -5,7 +5,6 @@
 #include <string>
 #include <memory>
 
-// 1. Шаблонный интерфейс слушателя изменений
 template <typename T>
 class IPropertyChangedListener {
 public:
@@ -14,7 +13,6 @@ public:
     virtual ~IPropertyChangedListener() = default;
 };
 
-// 2. Интерфейс для управления слушателями (не шаблонный)
 class INotifyDataChanged {
 public:
     virtual void add_property_changed_listener(IPropertyChangedListener<INotifyDataChanged>* listener) = 0;
@@ -23,7 +21,6 @@ public:
     virtual ~INotifyDataChanged() = default;
 };
 
-// 4. Шаблонный интерфейс валидатора
 template <typename T>
 class IPropertyChangingListener {
 public:
@@ -32,7 +29,6 @@ public:
     virtual ~IPropertyChangingListener() = default;
 };
 
-// 5. Интерфейс для управления валидаторами (не шаблонный)
 class INotifyDataChanging {
 public:
     virtual void add_property_changing_listener(IPropertyChangingListener<INotifyDataChanging>* listener) = 0;
@@ -41,11 +37,8 @@ public:
     virtual ~INotifyDataChanging() = default;
 };
 
-// 3,6. Основной наблюдаемый класс
-class ObservableClass :
-    public INotifyDataChanged,
-    public INotifyDataChanging {
-
+class ObservableClass : public INotifyDataChanged, public INotifyDataChanging {
+private:
     std::vector<IPropertyChangedListener<INotifyDataChanged>*> changed_listeners;
     std::vector<IPropertyChangingListener<INotifyDataChanging>*> changing_listeners;
 
@@ -53,35 +46,29 @@ class ObservableClass :
     int age = 0;
 
 public:
-    // Управление слушателями изменений
-    void add_property_changed_listener(
-        IPropertyChangedListener<INotifyDataChanged>* listener
-    ) override {
+    void add_property_changed_listener( IPropertyChangedListener<INotifyDataChanged>* listener) override {
         changed_listeners.push_back(listener);
     }
 
-    void remove_property_changed_listener(
-        IPropertyChangedListener<INotifyDataChanged>* listener
-    ) override {
-        auto it = std::find(changed_listeners.begin(), changed_listeners.end(), listener);
-        if (it != changed_listeners.end()) changed_listeners.erase(it);
+    void remove_property_changed_listener(IPropertyChangedListener<INotifyDataChanged>* listener) override {
+        auto iter = std::find(changed_listeners.begin(), changed_listeners.end(), listener);
+
+        if (iter != changed_listeners.end()) {
+            changed_listeners.erase(iter);
+        }
     }
 
-    // Управление валидаторами
-    void add_property_changing_listener(
-        IPropertyChangingListener<INotifyDataChanging>* listener
-    ) override {
+    void add_property_changing_listener(IPropertyChangingListener<INotifyDataChanging>* listener) override {
         changing_listeners.push_back(listener);
     }
 
-    void remove_property_changing_listener(
-        IPropertyChangingListener<INotifyDataChanging>* listener
-    ) override {
-        auto it = std::find(changing_listeners.begin(), changing_listeners.end(), listener);
-        if (it != changing_listeners.end()) changing_listeners.erase(it);
+    void remove_property_changing_listener(IPropertyChangingListener<INotifyDataChanging>* listener) override {
+        auto iter = std::find(changing_listeners.begin(), changing_listeners.end(), listener);
+        if (iter != changing_listeners.end()) {
+            changing_listeners.erase(iter);
+        }
     }
 
-    // Сеттеры с валидацией
     void set_name(const std::string& new_name) {
         if (name == new_name) return;
 
@@ -126,12 +113,14 @@ public:
         }
     }
 
-    // Геттеры
-    std::string get_name() const { return name; }
-    int get_age() const { return age; }
+    std::string get_name() const { 
+        return name;
+    }
+    int get_age() const { 
+        return age;
+    }
 };
 
-// Валидатор возраста
 class AgeValidator : public IPropertyChangingListener<INotifyDataChanging> {
 public:
     bool on_property_changing(
@@ -157,7 +146,6 @@ public:
     }
 };
 
-// Валидатор имени
 class NameValidator : public IPropertyChangingListener<INotifyDataChanging> {
 public:
     bool on_property_changing(
@@ -183,7 +171,6 @@ public:
     }
 };
 
-// Логгер изменений
 class Logger : public IPropertyChangedListener<INotifyDataChanged> {
 public:
     void on_property_changed(
@@ -215,15 +202,12 @@ int main() {
     person.add_property_changing_listener(name_validator.get());
     person.add_property_changed_listener(logger.get());
 
-    // Корректные изменения
     person.set_name("Alice");
     person.set_age(25);
 
-    // Некорректные данные
     person.set_name("");
     person.set_age(-5);
 
-    // Дополнительные корректные изменения
     person.set_age(30);
     person.set_name("Bob");
 
