@@ -6,5 +6,7 @@ namespace nf {
 	class ILogHandler {
 	public:
 		virtual void handle(const std::string& text) = 0;
+
+		virtual ~ILogHandler() = default;
 	};
 }
