@@ -5,19 +5,14 @@ namespace nf {
         filters(filters), handlers(handlers) { }
 
     void Logger::log(const std::string& text) {
-        bool passed = true;
-
         for (ILogFilter*& filter : filters) {
             if (!filter->match(text)) {
-                passed = false;
-                break;
+                return;
             }
         }
 
-        if (passed) {
-            for (ILogHandler*& handler : handlers) {
-                handler->handle(text);
-            }
+        for (ILogHandler*& handler : handlers) {
+            handler->handle(text);
         }
     }
 }

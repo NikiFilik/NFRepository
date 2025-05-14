@@ -20,8 +20,10 @@ int main() {
     nf::SocketLogHandler socketHandler;
     nf::SyslogLogHandler syslogHandler;
 
-    nf::Logger logger(std::vector<nf::ILogFilter*> {&errorFilter, &emailFilter}, 
-        std::vector<nf::ILogHandler*> {&consoleHandler, &fileHandler, &socketHandler, &syslogHandler});
+    nf::Logger logger(
+        std::vector<nf::ILogFilter*> {&errorFilter, &emailFilter}, 
+        std::vector<nf::ILogHandler*> {&consoleHandler, &fileHandler, &socketHandler, &syslogHandler}
+    );
 
     logger.log("System started");
     logger.log("A critical error");
