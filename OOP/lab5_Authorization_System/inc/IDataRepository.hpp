@@ -7,7 +7,7 @@
 
 namespace nf {
 	template <typename T>
-	class IDataRepository {
+	class IDataRepositoryCommonFunctionality {
 	public:
 		virtual std::vector<T> getAll() = 0;
 		virtual T* getById(int id) = 0;
@@ -15,20 +15,17 @@ namespace nf {
 		virtual void update(const T& object) = 0;
 		virtual void remove(const T& object) = 0;
 
-		virtual ~IDataRepository() = default;
+		virtual ~IDataRepositoryCommonFunctionality() = default;
+	};
+
+	template <typename T>
+	class IDataRepository: public nf::IDataRepositoryCommonFunctionality<T> {
+
 	};
 
 	template <>
-	class IDataRepository<nf::User> {
+	class IDataRepository<nf::User>: public nf::IDataRepositoryCommonFunctionality<nf::User> {
 	public:
-		virtual std::vector<nf::User> getAll() = 0;
-		virtual nf::User* getById(int id) = 0;
-		virtual void add(const nf::User& object) = 0;
-		virtual void update(const nf::User& object) = 0;
-		virtual void remove(const nf::User& object) = 0;
-
 		virtual nf::User* getByLogin(std::string login) = 0;
-
-		virtual ~IDataRepository() = default;
 	};
 }

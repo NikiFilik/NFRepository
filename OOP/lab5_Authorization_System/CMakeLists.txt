@@ -9,6 +9,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED TRUE)
 
 include_directories(
 	"inc/"
+	"ext/"
 )
 
 add_executable("${PROJECT_NAME}" 
@@ -21,4 +22,11 @@ add_executable("${PROJECT_NAME}"
 	inc/DataRepository.hpp 
 
 	inc/IAuthService.hpp
+
+	inc/AuthService.hpp src/AuthService.cpp
+
+	ext/json.hpp
 )
+
+file(COPY "users.json" DESTINATION "/")
+file(COPY "auth.json" DESTINATION "/")
